@@ -1,3 +1,9 @@
+"""
+Script used to download data from Kaggle and save to project.
+This will not do any ETL of the data.
+See src/data/etl.py for next steps.
+"""
+
 from config import proj
 import kaggle
 from pathlib import Path
@@ -14,4 +20,4 @@ if PATH_RAW_DATA.is_dir():
 else:
     raise NotADirectoryError(str(PATH_RAW_DATA.resolve()) + ' does not exist.')
 
-# See data/etl.py for next steps
+print("Download complete.")
