@@ -1,7 +1,7 @@
 """
 Script used to download data from Kaggle and save to project.
 This will not do any ETL of the data.
-See src/data/etl.py for next steps.
+See src/data/etl_main.py for next steps.
 """
 
 from config import proj
