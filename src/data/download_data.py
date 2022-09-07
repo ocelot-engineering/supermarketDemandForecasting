@@ -12,7 +12,7 @@ from pathlib import Path
 # Credentials already set
 
 KAGGLE_COMP_NAME = 'favorita-grocery-sales-forecasting'
-PATH_RAW_DATA = Path(proj.proj_paths["top"]).joinpath('data').joinpath('raw')
+PATH_RAW_DATA = proj.Config.paths.get("data_raw")
 
 if PATH_RAW_DATA.is_dir():
     kaggle.api.authenticate()

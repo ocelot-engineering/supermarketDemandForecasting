@@ -1,7 +1,7 @@
 from pyspark.sql.types import StructType, IntegerType, StringType, DateType, FloatType, BooleanType
 
 """
-Note: removing ID since it is not useful.
+Note: should remove ID since it is not useful.
 +---+----------+---------+--------+----------+-----------+
 | id|      date|store_nbr|item_nbr|unit_sales|onpromotion|
 +---+----------+---------+--------+----------+-----------+
@@ -11,7 +11,8 @@ Note: removing ID since it is not useful.
 +---+----------+---------+--------+----------+-----------+
 """
 
-schema = StructType()\
+schema = StructType() \
+    .add('id', IntegerType(), True) \
     .add('date', DateType(), True)\
     .add('store_nbr', IntegerType(), True)\
     .add('item_nbr', IntegerType(), True)\

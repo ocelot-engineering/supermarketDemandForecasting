@@ -3,25 +3,41 @@ Extract-transform-load the already downloaded data.
 Datasets should already be present before running this script. See: scr/data/download_data.py to download.
 """
 
-# TODO ETL entire script
-
 from config import proj
-from pathlib import Path
-from os import listdir
 from src.utils.etl_utils import *
+from re import sub
+from pathlib import Path
 
-PATH_RAW_DATA_DIR = Path(proj.proj_paths["top"]).joinpath('data').joinpath('raw')
-PATH_INTERIM_DATA_DIR = Path(proj.proj_paths["top"]).joinpath('data').joinpath('interim')
-PATH_PROC_DATA_DIR = Path(proj.proj_paths["top"]).joinpath('data').joinpath('processed')
+# Clear interm data directory for clean run
+clear_interm_data_dir()
 
-# TODO Decomp main file
-decomp_file(str(PATH_RAW_DATA_DIR.joinpath('favorita-grocery-sales-forecasting.zip')), str(PATH_INTERIM_DATA_DIR))
+# Decompress downloaded file (main file from Kaggle)
+decomp_file(file_path=proj.Config.paths.get("data_raw").joinpath('favorita-grocery-sales-forecasting.zip'),
+            extract_path=proj.Config.paths.get("data_interim"))
 
-# TODO loop through each and create a parquet file
-for file_path in listdir(PATH_INTERIM_DATA_DIR):
-    decomp_file(file_path, PATH_INTERIM_DATA_DIR)
-    get_schema()
-    csv_to_parquet()
+# Get file list post decompression
+file_list = get_file_list(dir_path=proj.Config.paths.get("data_interim"),
+                          regex_etx_pattern=".*\\.7z$")
 
-# TODO Clean up interim
+# Loop through each and create a parquet file
+for file_name in file_list:
+    print("ETL: " + file_name)
+
+    # Decompress file
+    file_path = proj.Config.paths.get("data_interim").joinpath(file_name)
+    decomp_file(file_path=file_path,
+                extract_path=proj.Config.paths.get("data_interim"),
+                print_msg=True)
+
+    # Convert decompressed csv to parquet file with custom schema
+    file_path_csv = Path(sub("\\.7z$", "", str(file_path)))
+    parquet_file_name = Path(sub("\\.csv\\.7z$", ".parquet", str(file_name)))
+    parquet_file_path = proj.Config.paths.get("data_proc").joinpath(parquet_file_name)
+    schema = get_schema(file_name)
+    csv_to_parquet(read_path=file_path_csv,
+                   write_path=parquet_file_path,
+                   schema=schema)
+
+# Clean up interim
+clear_interm_data_dir()
 
