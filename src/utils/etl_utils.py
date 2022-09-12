@@ -87,29 +87,6 @@ def csv_to_parquet(read_path: Union[str, os.PathLike],
     return None
 
 
-def get_schema(file_name: Union[str, os.PathLike]) -> StructType:
-    """
-    Returns the schema object of a file path passed in.
-    Schema must be saved under `src/data/schemas/` with the format schema_<file_name>.py.
-    e.g. `src/data/schemas/schema_transactions.py`
-    :param file_name: file name or file path e.g. `items.csv` or `items`
-    :return: StructType
-    """
-    import os.path
-    from re import sub
-    from importlib import import_module
-    from config import proj
-
-    file_name_w_etx = os.path.basename(file_name)
-    file_name_csv = sub("\\.7z$", "", str(file_name_w_etx))
-
-    schema_file_name = proj.Config.data.get("schema_map").get(file_name_csv)
-
-    schema_package = import_module(proj.Config.data.get("schema_package") + "." + schema_file_name)
-
-    return schema_package.schema
-
-
 def get_file_list(dir_path: Union[str, os.PathLike], regex_etx_pattern: str = "(.*\\.csv$|.*\\.7z$)") -> list[str]:
     from os import listdir
     from re import compile
